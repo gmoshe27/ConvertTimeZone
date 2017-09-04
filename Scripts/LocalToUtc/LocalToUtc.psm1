@@ -1,4 +1,4 @@
-﻿function Convert-UTCToLocal
+﻿function Convert-UtcToLocal
 {
 <#
 .Synopsis
@@ -8,9 +8,9 @@
     To override the UTC Time, enter an ISO 8601 string (ex: "2017-08-01 09:20:00") as a parameter.
     To override the Time Zone use any of the time zone strings listed in https://msdn.microsoft.com/en-us/library/cc749073.aspx
 .Example
-    Convert-UTCToLocalTime -AddHours -3 -UTCTime "2017-08-01 03:00:00"
+    Convert-UtcToLocalTime -AddHours -3 -UTCTime "2017-08-01 03:00:00"
 .Example
-    Convert-UTCToLocalTime -TimeZone "Pacific Standard Time"
+    Convert-UtcToLocalTime -TimeZone "Pacific Standard Time"
 #>
 
     param(
@@ -41,7 +41,7 @@
     return $converted
 }
 
-function Convert-LocalToUTC
+function Convert-LocalToUtc
 {
 <#
 .Synopsis
@@ -51,9 +51,9 @@ function Convert-LocalToUTC
     To override the local time, enter an ISO 8601 string (ex: "2017-08-01 09:20:00") as a parameter.
     To override the Time Zone use any of the strings listed in https://msdn.microsoft.com/en-us/library/cc749073.aspx
 .Example
-    Convert-LocalTimeToUTC -AddHours 5
+    Convert-LocalTimeToUtc -AddHours 5
 .Example
-    Convert-LocalTimeToUTC -TimeZone "Pacific Standard Time"
+    Convert-LocalTimeToUtc -TimeZone "Pacific Standard Time"
 #>
 
     param(

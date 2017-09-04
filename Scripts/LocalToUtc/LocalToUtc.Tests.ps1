@@ -49,3 +49,5 @@ Describe 'UtcToLocal' {
         $result.UTCTime | Should Be $expected
     }
 }
+
+Remove-Module -Name LocalToUtc
