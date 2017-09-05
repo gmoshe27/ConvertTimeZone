@@ -64,7 +64,7 @@ function Convert-LocalToUtc
     [String] $TimeZone
     )
 
-    $local = [System.DateTime]::Now.ToLocalTime()
+    $local = [System.DateTime]::UtcNow.ToLocalTime()
     $utc = $local.ToUniversalTime()
     $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
 
