@@ -21,8 +21,8 @@
     [String] $TimeZone
     )
 
-    $utc = [System.DateTime]::UtcNow
-    $local = $utc.ToLocalTime()
+    $utc = Get-UtcTime
+    $local = Get-LocalTime $utc
     $tzone = Get-TimeZone
 
     if ($UtcTime) { $utc = [System.DateTime]::Parse($UtcTime) }
@@ -34,7 +34,7 @@
         $local = [TimeZoneInfo]::ConvertTimeFromUTC($utc, $tz)
         $tzone = $tz
     } else {
-        $local = $utc.ToLocalTime()
+        $local = Get-LocalTime $utc
     }
 
     $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
@@ -64,20 +64,30 @@ function Convert-LocalToUtc
     [String] $TimeZone
     )
 
-    $utc = [System.DateTime]::UtcNow
-    $local = $utc.ToLocalTime()
+    $utc = Get-UtcTime
+    $local = Get-LocalTime $utc
     $tzone = Get-TimeZone
 
     if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
-    if ($AddDays) { $local = $local.AddDays($AddDays) }
-    if ($AddHours) { $local = $local.AddHours($AddHours) }
-    if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes) }
+    if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
+    if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
+    if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
     if ($TimeZone) {
-        # Get the time zone, get the local timezone time from UTC
-        $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-        $tzKind = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
-        $local = [TimeZoneInfo]::ConvertTimeFromUtc($utc, $tz)
-        $tzone = $tz
+        $tzDst = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
+        if ($LocalTime) {
+            # if a specific time is specified, then get the UTC time for that DateTime in
+            # the given time zone.
+            $tzTime = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
+            $utc = [TimeZoneInfo]::ConvertTimeToUtc($tzTime, $tzDst)
+        } else {
+            # if we are using the system time as the local time, then convert the system time
+            # to the destination's time zone first. 
+            # Ex: if the system time is EST and the specified time is PST
+            #     $local is DateTime.Now. Convert it to PST and return the new local time and utc
+            $local = [TimeZoneInfo]::ConvertTime($local, $tzone, $tzDst)
+            $utc = [TimeZoneInfo]::ConvertTimeToUtc($local, $tzDst)
+        }
+        $tzone = $tzDst
     } else {
         $utc = $local.ToUniversalTime()
     }
@@ -85,3 +95,7 @@ function Convert-LocalToUtc
     $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
     return $converted
 }
+
+# overloaded to help with testing
+function Get-UtcTime { return [System.DateTime]::UtcNow }
+function Get-LocalTime ($time) { return $time.ToLocalTime() }
