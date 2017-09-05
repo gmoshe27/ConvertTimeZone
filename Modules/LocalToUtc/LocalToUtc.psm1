@@ -8,13 +8,13 @@
     To override the UTC Time, enter an ISO 8601 string (ex: "2017-08-01 09:20:00") as a parameter.
     To override the Time Zone use any of the time zone strings listed in https://msdn.microsoft.com/en-us/library/cc749073.aspx
 .Example
-    Convert-UtcToLocalTime -AddHours -3 -UTCTime "2017-08-01 03:00:00"
+    Convert-UtcToLocalTime -AddHours -3 -UtcTime "2017-08-01 03:00:00"
 .Example
     Convert-UtcToLocalTime -TimeZone "Pacific Standard Time"
 #>
 
     param(
-    [String] $UTCTime,
+    [String] $UtcTime,
     [Int] $AddDays,
     [Int] $AddHours,
     [Int] $AddMinutes,
@@ -23,9 +23,9 @@
 
     $utc = [System.DateTime]::UtcNow
     $local = $utc.ToLocalTime()
-    $converted = New-Object psobject -Property @{ UTCTime=$utc; LocalTime=$local }
+    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
 
-    if ($UTCTime) { $utc = [System.DateTime]::Parse($UTCTime) }
+    if ($UtcTime) { $utc = [System.DateTime]::Parse($UtcTime) }
     if ($AddDays) { $utc = $utc.AddDays($AddDays) }
     if ($AddHours) { $utc = $utc.AddHours($AddHours) }
     if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
@@ -36,7 +36,7 @@
         $local = $utc.ToLocalTime()
     }
 
-    $converted.UTCTime = $utc
+    $converted.UtcTime = $utc
     $converted.LocalTime = $local    
     return $converted
 }
@@ -66,7 +66,7 @@ function Convert-LocalToUtc
 
     $local = [System.DateTime]::Now.ToLocalTime()
     $utc = $local.ToUniversalTime()
-    $converted = New-Object psobject -Property @{ UTCTime=$utc; LocalTime=$local }
+    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
 
     if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
     if ($AddDays) { $local = $local.AddDays($AddDays) }
@@ -80,7 +80,7 @@ function Convert-LocalToUtc
         $utc = $local.ToUniversalTime()
     }
 
-    $converted.UTCTime = $utc
+    $converted.UtcTime = $utc
     $converted.LocalTime = $local
     return $converted
 }

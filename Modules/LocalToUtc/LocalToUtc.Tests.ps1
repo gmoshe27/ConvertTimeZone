@@ -32,21 +32,21 @@ Describe 'UtcToLocal' {
     $testTime= "2017-09-04 08:25:00"
     
     It 'Parses ISO8601 properly' {
-        $result = Convert-UTCToLocal -UTCTime $testTime
+        $result = Convert-UTCToLocal -UtcTime $testTime
         $expected = [System.DateTime]::Parse($testTime)
-        $result.UTCTime | Should Be $expected
+        $result.UtcTime | Should Be $expected
     }
 
     It 'Converts UTC time to local time correctly' {
-        $result = Convert-UTCToLocal -UTCTime $testTime -TimeZone "Eastern Standard Time"
+        $result = Convert-UTCToLocal -UtcTime $testTime -TimeZone "Eastern Standard Time"
         $expected = [System.DateTime]::Parse($testTime).AddHours(-4)
         $result.LocalTime | Should Be $expected
     }
 
     It 'Adds hours, minutes, seconds correclty' {
-        $result = Convert-UTCToLocal -UTCTime $testTime -AddDays 1 -AddHours 2 -AddMinutes 3
+        $result = Convert-UTCToLocal -UtcTime $testTime -AddDays 1 -AddHours 2 -AddMinutes 3
         $expected = [System.DateTime]::Parse($testTime).AddDays(1).AddHours(2).AddMinutes(3)
-        $result.UTCTime | Should Be $expected
+        $result.UtcTime | Should Be $expected
     }
 }
 
