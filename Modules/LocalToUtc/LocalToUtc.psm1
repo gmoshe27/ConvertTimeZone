@@ -23,7 +23,7 @@
 
     $utc = [System.DateTime]::UtcNow
     $local = $utc.ToLocalTime()
-    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
+    $tzone = Get-TimeZone
 
     if ($UtcTime) { $utc = [System.DateTime]::Parse($UtcTime) }
     if ($AddDays) { $utc = $utc.AddDays($AddDays) }
@@ -32,12 +32,12 @@
     if ($TimeZone) {
         $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
         $local = [TimeZoneInfo]::ConvertTimeFromUTC($utc, $tz)
+        $tzone = $tz
     } else {
         $local = $utc.ToLocalTime()
     }
 
-    $converted.UtcTime = $utc
-    $converted.LocalTime = $local    
+    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
     return $converted
 }
 
@@ -66,23 +66,22 @@ function Convert-LocalToUtc
 
     $utc = [System.DateTime]::UtcNow
     $local = $utc.ToLocalTime()
-    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
+    $tzone = Get-TimeZone
 
     if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
     if ($AddDays) { $local = $local.AddDays($AddDays) }
     if ($AddHours) { $local = $local.AddHours($AddHours) }
     if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes) }
     if ($TimeZone) {
-        # Get the time zone, convert $local to utc given the tz, and then update $local
+        # Get the time zone, get the local timezone time from UTC
         $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
         $tzKind = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
-        $utc = [TimeZoneInfo]::ConvertTimeToUTC($tzKind, $tz)
         $local = [TimeZoneInfo]::ConvertTimeFromUtc($utc, $tz)
+        $tzone = $tz
     } else {
         $utc = $local.ToUniversalTime()
     }
 
-    $converted.UtcTime = $utc
-    $converted.LocalTime = $local
+    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
     return $converted
 }
