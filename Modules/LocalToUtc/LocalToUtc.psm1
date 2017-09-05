@@ -64,8 +64,8 @@ function Convert-LocalToUtc
     [String] $TimeZone
     )
 
-    $local = [System.DateTime]::UtcNow.ToLocalTime()
-    $utc = $local.ToUniversalTime()
+    $utc = [System.DateTime]::UtcNow
+    $local = $utc.ToLocalTime()
     $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local }
 
     if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
@@ -73,9 +73,11 @@ function Convert-LocalToUtc
     if ($AddHours) { $local = $local.AddHours($AddHours) }
     if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes) }
     if ($TimeZone) {
+        # Get the time zone, convert $local to utc given the tz, and then update $local
         $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-        $local = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
-        $utc = [TimeZoneInfo]::ConvertTimeToUTC($local, $tz)
+        $tzKind = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
+        $utc = [TimeZoneInfo]::ConvertTimeToUTC($tzKind, $tz)
+        $local = [TimeZoneInfo]::ConvertTimeFromUtc($utc, $tz)
     } else {
         $utc = $local.ToUniversalTime()
     }

@@ -2,13 +2,13 @@
 
 This module makes it easy to get the current local time in UTC. It was built for my specific use case where
 I work with machines that register events in UTC time stamps, but I experience their failures in my local time.
-Using this script it is possible to not only get the current time repeated in UTC, but also to describe a time in
-the past or future and have that output as UTC.
+Using this script it is possible to return the current time in UTC, and query for a time in the past or future 
+in UTC as well.
 
 ## Usage
 There are two functions, `Convert-LocalTimeToUtc` and `Convert-UtcToLocalTime`, which will return an object that
-contains two properties, `LocalTime` and `UtcTime`. The `LocalTime` is the system local time, so it will be the
-time based on the timezone that is set for the system. 
+contains two properties, `LocalTime` and `UtcTime`. The `LocalTime` defaults to the system local time, unless it is
+modified with the `-TimeZone` parameter.
 
 ```powershell
 Convert-LocalToUtc
@@ -25,7 +25,8 @@ LocalTime           UtcTime
 ```
 
 If you want to know the local time and utc time for a specific timezone, then use the `-Timezone` parameter with
-either function.
+either function. To see a list of valid time zones that the system is aware of, use the `Get-TimeZone -ListAvailable | Select Id`
+command.
 
 ```powershell
 Convert-UTCtoLocal -TimeZone "Israel Standard Time"
