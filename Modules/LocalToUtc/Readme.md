@@ -25,8 +25,7 @@ LocalTime           UtcTime
 ```
 
 If you want to know the local time and utc time for a specific timezone, then use the `-Timezone` parameter with
-either function. To see a list of valid time zones that the system is aware of, use the `Get-TimeZone -ListAvailable | Select Id`
-command.
+either function. To see a list of valid time zones that the system is aware of, use `Get-TimeZone -ListAvailable | Select Id`.
 
 ```powershell
 Convert-UTCtoLocal -TimeZone "Israel Standard Time"
