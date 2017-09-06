@@ -23,7 +23,7 @@
 
     $utc = Get-UtcTime
     $local = Get-LocalTime $utc
-    $tzone = Get-TimeZone
+    $tzone = Invoke-GetTimeZone
 
     if ($UtcTime) { $utc = [System.DateTime]::Parse($UtcTime) }
     if ($AddDays) { $utc = $utc.AddDays($AddDays) }
@@ -66,7 +66,11 @@ function Convert-LocalToUtc
 
     $utc = Get-UtcTime
     $local = Get-LocalTime $utc
-    $tzone = Get-TimeZone
+    $tzone = Invoke-GetTimeZone
+
+    write-host "get-utctime" $utc
+    write-host "get-localtime" $local
+    write-host "get-timezone" $tzone
 
     if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
     if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
@@ -84,8 +88,12 @@ function Convert-LocalToUtc
             # to the destination's time zone first. 
             # Ex: if the system time is EST and the specified time is PST
             #     $local is DateTime.Now. Convert it to PST and return the new local time and utc
+            write-host "tzone - " $tzone
+            write-host "tzDst - " $tzDst
+            write-host "local - " $local "utc - " $utc
             $local = [TimeZoneInfo]::ConvertTime($local, $tzone, $tzDst)
             $utc = [TimeZoneInfo]::ConvertTimeToUtc($local, $tzDst)
+            write-host "local - " $local "utc - " $utc
         }
         $tzone = $tzDst
     } else {
@@ -99,3 +107,4 @@ function Convert-LocalToUtc
 # overloaded to help with testing
 function Get-UtcTime { return [System.DateTime]::UtcNow }
 function Get-LocalTime ($time) { return $time.ToLocalTime() }
+function Invoke-GetTimeZone { return Get-TimeZone }

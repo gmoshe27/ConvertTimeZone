@@ -25,21 +25,28 @@ Describe 'LocalToUtc' {
 
     It 'Treats the current local time as the specified timezone local time' {
         # UTC is "2017-09-04 08:25:00"
-        # EST is "2017-09-04 04:25:00" -4
-        # PST is "2017-09-04 01:25:00" -3
+        # CST is "2017-09-04 03:25:00" -5
+        # PST is "2017-09-04 01:25:00" -7
 
-        $expectedUtc = [System.DateTime]::Parse($testTime)
-        $expectedLocal = [System.DateTime]::Parse($testTime).AddHours(-7) # PDT is 7 hours behind UTC (daylight savings)
-
-        Mock Get-TimeZone {
-            $est = Get-TimeZone "Eastern Standard Time"
-            return $est
+        Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
+            $cst = Get-TimeZone "Central Standard Time"
+            return $cst
         }
-        Mock Get-UtcTime {
-            $utcTime = [System.DateTime]::Parse($testTime)
+        Mock -ModuleName LocalToUtc Get-UtcTime {
+            $utcTime = [System.DateTime]::Parse("2017-09-04 08:25:00")
             $utc = [System.DateTime]::SpecifyKind($utcTime, [System.DateTimeKind]::Utc)
             return $utc
         }
+        Mock -ModuleName LocalToUtc Get-LocalTime {
+            $cstTime = "2017-09-04 03:25:00"
+            $localTime = [System.DateTime]::Parse($cstTime)
+            return $localTime
+        }
+
+        $utcTime = "2017-09-04 08:25:00"
+        $pstTime = "2017-09-04 01:25:00" # PDT is 7 hours behind UTC (daylight savings)
+        $expectedUtc = [System.DateTime]::Parse($utcTime)
+        $expectedLocal = [System.DateTime]::Parse($pstTime)
 
         $result = Convert-LocalToUTC -TimeZone "Pacific Standard Time"
         $result.UtcTime | Should Be $expectedUtc
