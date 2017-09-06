@@ -21,13 +21,13 @@ Convert-LocalToUtc
 
 LocalTime            TimeZone                               UtcTime
 ---------            --------                               -------
-9/4/2017 11:49:12 PM (UTC-05:00) Eastern Time (US & Canada) 9/5/2017 3:49:12 AM
+9/5/2017 10:08:57 PM (UTC-05:00) Eastern Time (US & Canada) 9/6/2017 2:08:57 AM
 
 Convert-UtcToLocal
 
 LocalTime            TimeZone                               UtcTime
 ---------            --------                               -------
-9/4/2017 11:49:23 PM (UTC-05:00) Eastern Time (US & Canada) 9/5/2017 3:49:23 AM
+9/5/2017 10:09:14 PM (UTC-05:00) Eastern Time (US & Canada) 9/6/2017 2:09:14 AM
 ```
 
 If you want to know the local time and utc time for a specific timezone, then use the `-Timezone` parameter with
@@ -38,7 +38,7 @@ Convert-UTCtoLocal -TimeZone "Israel Standard Time"
 
 LocalTime           TimeZone              UtcTime
 ---------           --------              -------
-9/5/2017 6:49:36 AM (UTC+02:00) Jerusalem 9/5/2017 3:49:36 AM
+9/6/2017 5:09:36 AM (UTC+02:00) Jerusalem 9/6/2017 2:09:36 AM
 ```
 
 Both functions also take an ISO 8601 formatted string to set a time of interest.
@@ -48,7 +48,7 @@ Convert-LocalToUTC -LocalTime "2017-09-04 20:33:00" -TimeZone "Pacific Standard 
 
 LocalTime           TimeZone                               UtcTime
 ---------           --------                               -------
-9/4/2017 8:49:54 PM (UTC-08:00) Pacific Time (US & Canada) 9/5/2017 3:49:54 AM
+9/4/2017 8:33:00 PM (UTC-08:00) Pacific Time (US & Canada) 9/5/2017 3:33:00 AM
 ```
 
 And lastly you can modify the days, hours, and minutes with either function.
@@ -58,7 +58,7 @@ Convert-UtcToLocal -LocalTime "2017-09-04 08:24:00" -AddDays 2 -AddHours -3 -Add
 
 LocalTime           TimeZone                               UtcTime
 ---------           --------                               -------
-9/6/2017 8:56:07 PM (UTC-05:00) Eastern Time (US & Canada) 9/7/2017 12:56:07 AM
+9/7/2017 7:16:19 PM (UTC-05:00) Eastern Time (US & Canada) 9/7/2017 11:16:19 PM
 ```
 
 ## Versions
@@ -69,3 +69,5 @@ LocalTime           TimeZone                               UtcTime
 * Added Pester test script
 * Added Manifest
 * Added Readme
+
+TODO: Create AppVeyor artifact and psake build script for auto publishing to powershell gallery
