@@ -15,10 +15,10 @@
 
     param(
     [String] $UtcTime,
+    [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes,
-    [String] $TimeZone
+    [Int] $AddMinutes
     )
 
     $utc = Get-UtcTime
@@ -58,10 +58,10 @@ function Convert-LocalToUtc
 
     param(
     [String] $LocalTime,
+    [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes,
-    [String] $TimeZone
+    [Int] $AddMinutes
     )
 
     $utc = Get-UtcTime

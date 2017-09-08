@@ -58,27 +58,41 @@ Describe 'LocalToUtc' {
         $expected = [System.DateTime]::Parse($testTime).AddDays(1).AddHours(2).AddMinutes(3)
         $result.LocalTime | Should Be $expected
     }
+
+    It 'Has the timezone as the first unnamed parameter' {
+        $localTime = [System.DateTime]::Parse($testTime)
+        $utc = [System.DateTime]::Parse($testTime).AddHours(4) # 4 hours ahead for EDT
+        $result = Convert-LocalToUtc $localTime "Eastern Standard Time"
+        $result.UtcTime | Should Be $utc
+    }
 }
 
 Describe 'UtcToLocal' {
     $testTime= "2017-09-04 08:25:00"
     
     It 'Parses ISO8601 properly' {
-        $result = Convert-UTCToLocal -UtcTime $testTime
+        $result = Convert-UtcToLocal -UtcTime $testTime
         $expected = [System.DateTime]::Parse($testTime)
         $result.UtcTime | Should Be $expected
     }
 
     It 'Converts UTC time to local time correctly' {
-        $result = Convert-UTCToLocal -UtcTime $testTime -TimeZone "Eastern Standard Time"
+        $result = Convert-UtcToLocal -UtcTime $testTime -TimeZone "Eastern Standard Time"
         $expected = [System.DateTime]::Parse($testTime).AddHours(-4)
         $result.LocalTime | Should Be $expected
     }
 
     It 'Adds hours, minutes, seconds correclty' {
-        $result = Convert-UTCToLocal -UtcTime $testTime -AddDays 1 -AddHours 2 -AddMinutes 3
+        $result = Convert-UtcToLocal -UtcTime $testTime -AddDays 1 -AddHours 2 -AddMinutes 3
         $expected = [System.DateTime]::Parse($testTime).AddDays(1).AddHours(2).AddMinutes(3)
         $result.UtcTime | Should Be $expected
+    }
+
+    It 'Has the timezone as the first unnamed parameter' {
+        $utc = [System.DateTime]::Parse($testTime)
+        $local = [System.DateTime]::Parse($testTime).AddHours(-4) # 4 hours behind for EDT
+        $result = Convert-UtcToLocal $utc "Eastern Standard Time"
+        $result.LocalTime | Should Be $local
     }
 }
 
