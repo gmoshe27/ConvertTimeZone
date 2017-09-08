@@ -63,6 +63,10 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.2.0
+
+* Switched to using tzutil when Get-TimeZone is not available
+
 ### 1.1.0
 
 * Moved the TimeZone to the second position in the unnamed parameters

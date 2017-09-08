@@ -109,4 +109,10 @@ function Convert-LocalToUtc
 # overloaded to help with testing
 function Get-UtcTime { return [System.DateTime]::UtcNow }
 function Get-LocalTime ($time) { return $time.ToLocalTime() }
-function Invoke-GetTimeZone { return Get-TimeZone }
+function Invoke-GetTimeZone {
+    if (Get-Command Get-TimeZone -errorAction SilentlyContinue) {
+        return Get-TimeZone
+    }
+    
+    return tzutil /g
+}
