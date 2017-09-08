@@ -18,7 +18,8 @@
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes
+    [Int] $AddMinutes,
+    [Switch] $Verbose
     )
 
     $utc = Get-UtcTime
@@ -37,8 +38,12 @@
         $local = Get-LocalTime $utc
     }
 
-    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
-    return $converted
+    if ($verbose) {
+        $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+        return $converted
+    }
+
+    return $local
 }
 
 function Convert-LocalToUtc
@@ -61,7 +66,8 @@ function Convert-LocalToUtc
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes
+    [Int] $AddMinutes,
+    [Switch] $Verbose
     )
 
     $utc = Get-UtcTime
@@ -92,8 +98,12 @@ function Convert-LocalToUtc
         $utc = $local.ToUniversalTime()
     }
 
-    $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
-    return $converted
+    if ($Verbose) {
+        $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+        return $converted
+    }
+
+    return $utc
 }
 
 # overloaded to help with testing
