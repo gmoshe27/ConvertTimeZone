@@ -73,5 +73,6 @@ LocalTime           TimeZone                               UtcTime
 ### 1.1.0
 
 * Moved the TimeZone to the second position in the unnamed parameters
+* Only returning the converted time unless a -Verbose switch is used
 
 TODO: Create AppVeyor artifact and psake build script for auto publishing to powershell gallery
