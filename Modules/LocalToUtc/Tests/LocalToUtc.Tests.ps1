@@ -4,7 +4,8 @@ if ((Get-Module).Name -contains 'LocalToUtc') {
     Remove-Module -Name LocalToUtc
 }
 
-Import-Module "$PSScriptRoot\LocalToUtc.psm1"
+Remove-Module -Name LocalToUtc -ErrorAction SilentlyContinue
+Import-Module "$PSScriptRoot\..\LocalToUtc\LocalToUtc.psm1"
 
 Describe 'LocalToUtc' {
     $testTime = "2017-09-04 08:25:00"
@@ -105,5 +106,3 @@ Describe 'UtcToLocal' {
         $result.TimeZone | Should Be $pst
     }
 }
-
-Remove-Module -Name LocalToUtc
