@@ -63,16 +63,16 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.1.0
+
+* Moved the TimeZone to the second position in the unnamed parameters
+* Only returning the converted time unless a -Verbose switch is used
+
 ### 1.0.0
 
 * Added Convert-LocalTimeToUtc and Convert-UtcToLocalTime functions to module
 * Added Pester test script
 * Added Manifest
 * Added Readme
-
-### 1.1.0
-
-* Moved the TimeZone to the second position in the unnamed parameters
-* Only returning the converted time unless a -Verbose switch is used
 
 TODO: Create AppVeyor artifact and psake build script for auto publishing to powershell gallery
