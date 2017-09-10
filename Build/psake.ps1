@@ -10,14 +10,7 @@ Properties {
 
 Task Default -Depends Deploy
 
-Task Init {
-    $lines
-    "init"
-    
-    $newLine
-}
-
-Task Test -Depends Init {
+Task Test {
     $lines
     "STATUS: Testing with PowerShell $PSVersion"
 
@@ -41,10 +34,9 @@ Task Deploy -Depends Test {
 
     $IsTagged = $env:APPVEYOR_REPO_TAG -eq $true
     $HostIsAppveyor = $env:APPVEYOR -eq $true
-    $ForceDeployFromLocal = $env:ConvertTimeZoneDeploy -eq $true
 
     # Only deploy if the host is appveyor and the build was a result of a tag
-    $Deploy = ($HostIsAppveyor -and $IsTagged) -or $ForceDeployFromLocal
+    $Deploy = ($HostIsAppveyor -and $IsTagged) -or $ForceDeploy
 
     if ($Deploy) {
         "Deploying to powershell gallery due to tag - $env:APPVEYOR_REPO_TAG_NAME"

@@ -1,5 +1,3 @@
-![Build status](https://ci.appveyor.com/api/github/webhook?id=59sf1j8r9mp0vyta/branch/master?svg=true)
-
 [![Build status](https://ci.appveyor.com/api/projects/status/00kurvfj7ih1vat0/branch/master?svg=true
 )](https://ci.appveyor.com/project/gmoshe27/powershell/branch/master)
 
