@@ -1,0 +1,21 @@
+# See http://www.appveyor.com/docs/appveyor-yml for many more options
+# Based on: https://kevinmarquette.github.io/2017-01-21-powershell-module-continious-delivery-pipeline/
+
+environment:
+  NugetApiKey:
+    # this is an encrypted key which appveyor decrypts during the build process
+    secure: Dc71XLdcW9l4LgUuDSqEQiMutuI6WAv9pYnF0eOWecW41M6EbbEFY26+8pVg644G
+
+# Allow WMF5 (i.e. PowerShellGallery functionality)
+os: WMF 5
+
+# Skip on updates to the readme.
+# We can force this by adding [skip ci] or [ci skip] anywhere in commit message 
+skip_commits:
+message: /updated readme.*|update readme.*s/
+
+build: false
+
+#Kick off the CI/CD pipeline
+test_script:
+- ps: . .\build.ps1
