@@ -36,7 +36,7 @@ LocalTime            TimeZone                               UtcTime
 
 If you want to know the local time and utc time for a specific timezone, then use the `-Timezone` parameter with
 either function. To see a list of valid time zones that the system is aware of, use :
-- Powershell > 5.1 - `Get-TimeZone -ListAvailable | Select Id`  
+- Powershell >= 5.1 - `Get-TimeZone -ListAvailable | Select Id`  
 - Powershell < 5.1 - `tzutil /l`
 
 ```powershell
@@ -47,8 +47,8 @@ LocalTime           TimeZone              UtcTime
 9/6/2017 5:09:36 AM (UTC+02:00) Jerusalem 9/6/2017 2:09:36 AM
 ```
 
-Both functions take a DateTime or DateTime string as the first parameter, and
-as part of a pipeline input.
+Both functions take a DateTime or DateTime string as the first unnamed parameter, which
+can also be passed in as part of a pipeline.
 
 ```powershell
 Convert-LocalToUTC "2017-09-04 20:33:00" "Pacific Standard Time" -Verbose
