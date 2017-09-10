@@ -1,6 +1,6 @@
 
 Properties {
-    $ProjectRoot = $PSScriptRoot
+    $ProjectRoot = "$PSScriptRoot\\.."
     $PSVersion = $PSVersionTable.PSVersion.Major
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
