@@ -44,7 +44,10 @@ Task Deploy -Depends Test {
 
     # Only deploy if we are on AppVeyor
     if ($env:APPVEYOR -eq $true -and $deploy) {
+        "Deploying to powershell gallery due to tag - $env:APPVEYOR_REPO_TAG_NAME"
         Publish-Module -Name LocalToUtc -NugetApiKey $ENV:NugetApiKey
+    } else {
+        "Skipping Deployment, no tags"
     }
 
     $newLine
