@@ -79,7 +79,7 @@ Describe 'LocalToUtc' {
 
         It 'Converts named LocalTime' {
             $local = Get-Date $testTime
-            New-Object psobject -Property @{ Name = "hello"; LocalTime=$utc; SomeField=123456 }
+            New-Object psobject -Property @{ Name = "hello"; LocalTime=$local; SomeField=123456 }
             $result = (Get-Date $testTime) | Convert-LocalToUtc -TimeZone "Pacific Standard Time"
             $result | Should Be (Get-Date $testTime).AddHours(7)
         }

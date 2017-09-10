@@ -66,6 +66,9 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.3.0
+* Intorduced pipeline support!
+
 ### 1.2.0
 
 * Switched to using tzutil when Get-TimeZone is not available
