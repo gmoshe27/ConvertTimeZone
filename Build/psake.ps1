@@ -8,7 +8,7 @@ Properties {
     $newLine = "`n"
 }
 
-Task Default -Depends Test
+Task Default -Depends Deploy
 
 Task Init {
     $lines
