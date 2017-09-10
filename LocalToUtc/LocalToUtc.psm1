@@ -8,42 +8,47 @@
     To override the UTC Time, enter an ISO 8601 string (ex: "2017-08-01 09:20:00") as a parameter.
     To override the Time Zone use any of the time zone strings listed in https://msdn.microsoft.com/en-us/library/cc749073.aspx
 .Example
-    Convert-UtcToLocalTime -AddHours -3 -UtcTime "2017-08-01 03:00:00"
+    Convert-UtcToLocal -AddHours -3 -UtcTime "2017-08-01 03:00:00"
 .Example
-    Convert-UtcToLocalTime -TimeZone "Pacific Standard Time"
+    Convert-UtcToLocal -TimeZone "Pacific Standard Time"
 #>
-
+    [CmdletBinding()]
+    
     param(
+    [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [String] $UtcTime,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes,
-    [Switch] $Verbose
+    [Int] $AddMinutes
     )
 
-    $utc = Get-UtcTime
-    $local = Get-LocalTime $utc
-    $tzone = Invoke-GetTimeZone
-
-    if ($UtcTime) { $utc = Get-Date $UtcTime }
-    if ($AddDays) { $utc = $utc.AddDays($AddDays) }
-    if ($AddHours) { $utc = $utc.AddHours($AddHours) }
-    if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
-    if ($TimeZone) {
-        $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-        $local = [TimeZoneInfo]::ConvertTimeFromUTC($utc, $tz)
-        $tzone = $tz
-    } else {
+    Process {
+        $utc = Get-UtcTime
         $local = Get-LocalTime $utc
-    }
+        $tzone = Invoke-GetTimeZone
 
-    if ($verbose) {
-        $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
-        return $converted
-    }
+        if ($UtcTime) { $utc = Get-Date $UtcTime }
+        if ($AddDays) { $utc = $utc.AddDays($AddDays) }
+        if ($AddHours) { $utc = $utc.AddHours($AddHours) }
+        if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
+        if ($TimeZone) {
+            $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
+            $local = [TimeZoneInfo]::ConvertTimeFromUTC($utc, $tz)
+            $tzone = $tz
+        } else {
+            $local = Get-LocalTime $utc
+        }
 
-    return $local
+        $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
+
+        if ($IsVerbose -eq $true) {
+            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+            return $converted
+        }
+
+        return $local
+    }
 }
 
 function Convert-LocalToUtc
@@ -56,54 +61,59 @@ function Convert-LocalToUtc
     To override the local time, enter an ISO 8601 string (ex: "2017-08-01 09:20:00") as a parameter.
     To override the Time Zone use any of the strings listed in https://msdn.microsoft.com/en-us/library/cc749073.aspx
 .Example
-    Convert-LocalTimeToUtc -AddHours 5
+    Convert-LocalToUtc -AddHours 5
 .Example
-    Convert-LocalTimeToUtc -TimeZone "Pacific Standard Time"
+    Convert-LocalToUtc -TimeZone "Pacific Standard Time"
 #>
+    [CmdletBinding()]
 
     param(
+    [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [String] $LocalTime,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
-    [Int] $AddMinutes,
-    [Switch] $Verbose
+    [Int] $AddMinutes
     )
 
-    $utc = Get-UtcTime
-    $local = Get-LocalTime $utc
-    $tzone = Invoke-GetTimeZone
+    Process {
+        $utc = Get-UtcTime
+        $local = Get-LocalTime $utc
+        $tzone = Invoke-GetTimeZone
 
-    if ($LocalTime) { $local = Get-Date $LocalTime }
-    if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
-    if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
-    if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
-    if ($TimeZone) {
-        $tzDst = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-        if ($LocalTime) {
-            # if a specific time is specified, then get the UTC time for that DateTime in
-            # the given time zone.
-            $tzTime = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
-            $utc = [TimeZoneInfo]::ConvertTimeToUtc($tzTime, $tzDst)
+        if ($LocalTime) { $local = Get-Date $LocalTime }
+        if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
+        if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
+        if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
+        if ($TimeZone) {
+            $tzDst = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
+            if ($LocalTime) {
+                # if a specific time is specified, then get the UTC time for that DateTime in
+                # the given time zone.
+                $tzTime = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)
+                $utc = [TimeZoneInfo]::ConvertTimeToUtc($tzTime, $tzDst)
+            } else {
+                # if we are using the system time as the local time, then convert the system time
+                # to the destination's time zone first. 
+                # Ex: if the system time is EST and the specified time is PST
+                #     $local is DateTime.Now. Convert it to PST and return the new local time and utc
+                $local = [TimeZoneInfo]::ConvertTime($local, $tzone, $tzDst)
+                $utc = [TimeZoneInfo]::ConvertTimeToUtc($local, $tzDst)
+            }
+            $tzone = $tzDst
         } else {
-            # if we are using the system time as the local time, then convert the system time
-            # to the destination's time zone first. 
-            # Ex: if the system time is EST and the specified time is PST
-            #     $local is DateTime.Now. Convert it to PST and return the new local time and utc
-            $local = [TimeZoneInfo]::ConvertTime($local, $tzone, $tzDst)
-            $utc = [TimeZoneInfo]::ConvertTimeToUtc($local, $tzDst)
+            $utc = $local.ToUniversalTime()
         }
-        $tzone = $tzDst
-    } else {
-        $utc = $local.ToUniversalTime()
-    }
 
-    if ($Verbose) {
-        $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
-        return $converted
-    }
+        $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
+        
+        if ($IsVerbose -eq $true) {
+            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+            return $converted
+        }
 
-    return $utc
+        return $utc
+    }
 }
 
 # overloaded to help with testing
