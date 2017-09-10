@@ -1,3 +1,5 @@
+![Build status](https://ci.appveyor.com/api/github/webhook?id=59sf1j8r9mp0vyta/branch/master?svg=true)
+
 # LocalToUtc
 
 This module makes it easy to get the current local time in UTC. It was built for my specific use case where
@@ -78,5 +80,3 @@ LocalTime           TimeZone                               UtcTime
 * Added Pester test script
 * Added Manifest
 * Added Readme
-
-TODO: Create AppVeyor artifact and psake build script for auto publishing to powershell gallery

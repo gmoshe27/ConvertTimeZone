@@ -26,7 +26,7 @@
     $local = Get-LocalTime $utc
     $tzone = Invoke-GetTimeZone
 
-    if ($UtcTime) { $utc = [System.DateTime]::Parse($UtcTime) }
+    if ($UtcTime) { $utc = Get-Date $UtcTime }
     if ($AddDays) { $utc = $utc.AddDays($AddDays) }
     if ($AddHours) { $utc = $utc.AddHours($AddHours) }
     if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
@@ -74,7 +74,7 @@ function Convert-LocalToUtc
     $local = Get-LocalTime $utc
     $tzone = Invoke-GetTimeZone
 
-    if ($LocalTime) { $local = [System.DateTime]::Parse($LocalTime) }
+    if ($LocalTime) { $local = Get-Date $LocalTime }
     if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
     if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
     if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
