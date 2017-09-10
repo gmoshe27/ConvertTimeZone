@@ -76,6 +76,13 @@ Describe 'LocalToUtc' {
             $result = (Get-Date $testTime) | Convert-LocalToUtc -TimeZone "Pacific Standard Time"
             $result | Should Be (Get-Date $testTime).AddHours(7)
         }
+
+        It 'Converts named LocalTime' {
+            $local = Get-Date $testTime
+            New-Object psobject -Property @{ Name = "hello"; LocalTime=$utc; SomeField=123456 }
+            $result = (Get-Date $testTime) | Convert-LocalToUtc -TimeZone "Pacific Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(7)
+        }
     }
 }
 
@@ -125,6 +132,13 @@ Describe 'UtcToLocal' {
 
     Context 'Pipeline Support' {
         It 'Converts pipeline value' {
+            $result = (Get-Date $testTime) | Convert-UtcToLocal -TimeZone "Pacific Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(-7)
+        }
+        
+        It 'Converts named UtcTime' {
+            $utc = Get-Date $testTime
+            New-Object psobject -Property @{ Name = "hello"; UtcTime=$utc; SomeField=123456 }
             $result = (Get-Date $testTime) | Convert-UtcToLocal -TimeZone "Pacific Standard Time"
             $result | Should Be (Get-Date $testTime).AddHours(-7)
         }
