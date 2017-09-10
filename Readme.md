@@ -1,5 +1,8 @@
 ![Build status](https://ci.appveyor.com/api/github/webhook?id=59sf1j8r9mp0vyta/branch/master?svg=true)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/00kurvfj7ih1vat0/branch/master?svg=true
+)](https://ci.appveyor.com/project/gmoshe27/powershell/branch/master)
+
 # LocalToUtc
 
 This module makes it easy to get the current local time in UTC. It was built for my specific use case where
@@ -68,6 +71,7 @@ LocalTime           TimeZone                               UtcTime
 ### 1.2.0
 
 * Switched to using tzutil when Get-TimeZone is not available
+* Replaced [System.DateTime]::Parse with Get-Date
 
 ### 1.1.0
 

@@ -39,13 +39,16 @@ Task Test -Depends Init {
 Task Deploy -Depends Test {
     $lines
 
-    # we only build if we are on appveyor and the build was a result of a tag
-    $deploy = $env:APPVEYOR_REPO_TAG -eq $true
+    $IsTagged = $env:APPVEYOR_REPO_TAG -eq $true
+    $HostIsAppveyor = $env:APPVEYOR -eq $true
+    $ForceDeployFromLocal = $env:ConvertTimeZoneDeploy -eq $true
 
-    # Only deploy if we are on AppVeyor
-    if ($env:APPVEYOR -eq $true -and $deploy) {
+    # Only deploy if the host is appveyor and the build was a result of a tag
+    $Deploy = ($HostIsAppveyor -and $IsTagged) -or $ForceDeployFromLocal
+
+    if ($Deploy) {
         "Deploying to powershell gallery due to tag - $env:APPVEYOR_REPO_TAG_NAME"
-        Publish-Module -Name LocalToUtc -NugetApiKey $ENV:NugetApiKey
+        Publish-Module -Path $ProjectRoot\LocalToUtc -NugetApiKey $ENV:NugetApiKey
     } else {
         "Skipping Deployment, no tags"
     }
