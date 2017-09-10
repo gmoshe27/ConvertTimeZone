@@ -5,7 +5,7 @@ param ($Task = 'Default')
 # Grab nuget bits, install modules, set build variables, start build.
 Get-PackageProvider -Name NuGet -ForceBootstrap | Out-Null
 
-Install-Module Psake, PSDeploy -force
+Install-Module Psake -force
 Install-Module Pester -Force -SkipPublisherCheck
 Import-Module Psake
 

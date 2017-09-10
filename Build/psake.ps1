@@ -38,9 +38,14 @@ Task Test -Depends Init {
 
 Task Deploy -Depends Test {
     $lines
-    "deploy"
 
-    #Publish-Module -Name LocalToUtc -NugetApiKey $ENV:NugetApiKey
+    # we only build if we are on appveyor and the build was a result of a tag
+    $deploy = $env:APPVEYOR_REPO_TAG -eq $true
+
+    # Only deploy if we are on AppVeyor
+    if ($env:APPVEYOR -eq $true -and $deploy) {
+        Publish-Module -Name LocalToUtc -NugetApiKey $ENV:NugetApiKey
+    }
 
     $newLine
 }
