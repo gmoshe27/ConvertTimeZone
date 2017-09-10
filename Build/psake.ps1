@@ -1,6 +1,6 @@
 
 Properties {
-    $ProjectRoot = "$PSScriptRoot\\.."
+    $ProjectRoot = Resolve-Path "$PSScriptRoot\.."
     $PSVersion = $PSVersionTable.PSVersion.Major
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $TestFile = "TestResults_PS$PSVersion`_$TimeStamp.xml"
@@ -8,7 +8,7 @@ Properties {
     $newLine = "`n"
 }
 
-Task Default -Depends Deploy
+Task Default -Depends Test
 
 Task Init {
     $lines
@@ -28,11 +28,9 @@ Task Test -Depends Init {
 
     # Failed tests?
     # Need to tell psake or it will proceed to the deployment. Danger!
-    "Test Result Failed Count - $TestResults.FailedCount"
     if($TestResults.FailedCount -gt 0)
     {
         Write-Error "Failed '$($TestResults.FailedCount)' tests, build failed"
-        "this is bs!"
     }
 
     $newLine
