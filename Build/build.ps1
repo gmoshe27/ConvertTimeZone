@@ -11,8 +11,7 @@ if ($env:APPVEYOR -eq $true) {
     Import-Module Psake
 
     # Only deploy if the host is appveyor and the build was a result of a tag
-    $IsTagged = $env:APPVEYOR_REPO_TAG -eq $true
-    if ($HostIsAppveyor -and $IsTagged) {
+    if ($env:APPVEYOR_REPO_TAG -eq $true) {
         $Task = "Deploy"
     }
 }
