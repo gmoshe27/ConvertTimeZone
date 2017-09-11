@@ -76,6 +76,9 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.3.1
+* Lowered the required version of PS to 4.0
+
 ### 1.3.0
 * Intorduced pipeline support!
 
