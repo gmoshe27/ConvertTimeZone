@@ -8,7 +8,7 @@ Properties {
     $newLine = "`n"
 }
 
-Task Default -Depends Deploy
+Task Default -Depends Test
 
 Task Test {
     $lines
@@ -35,15 +35,8 @@ Task Deploy -Depends Test {
     $IsTagged = $env:APPVEYOR_REPO_TAG -eq $true
     $HostIsAppveyor = $env:APPVEYOR -eq $true
 
-    # Only deploy if the host is appveyor and the build was a result of a tag
-    $Deploy = ($HostIsAppveyor -and $IsTagged) -or $ForceDeploy
-
-    if ($Deploy) {
-        "Deploying to powershell gallery due to tag - $env:APPVEYOR_REPO_TAG_NAME"
-        Publish-Module -Path $ProjectRoot\LocalToUtc -NugetApiKey $ENV:NugetApiKey
-    } else {
-        "Skipping Deployment, no tags"
-    }
+    "Deploying to powershell gallery due to tag - $env:APPVEYOR_REPO_TAG_NAME"
+    Publish-Module -Path $ProjectRoot\LocalToUtc -NugetApiKey $ENV:NugetApiKey
 
     $newLine
 }
