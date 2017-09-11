@@ -1,6 +1,6 @@
 # Taken from https://github.com/RamblingCookieMonster/PSDepend/blob/master/psake.ps1
 
-param ($Task = 'Default', [switch] $ForceDeploy)
+param ($Task = 'Default')
 
 if ($env:APPVEYOR -eq $true) {
     # Grab nuget bits, install modules, set build variables, start build.
