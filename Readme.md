@@ -76,6 +76,12 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 2.0.0
+* Added a generic Convert-TimeZone function
+* Breaking Changes
+  - Renamed the LocalTime parameter to Time for Convert-LocalToUtc
+  - Renamed the UtcTime parameter to Time for Convert-UtcToLocal
+
 ### 1.3.1
 * Lowered the required version of PS to 4.0
 
