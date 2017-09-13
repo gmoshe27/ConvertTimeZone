@@ -144,3 +144,6 @@ Describe 'UtcToLocal' {
         }
     }
 }
+
+Describe 'Convert-TimeZone' {
+}
