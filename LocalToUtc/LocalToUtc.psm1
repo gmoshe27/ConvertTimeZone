@@ -118,34 +118,38 @@ function Convert-LocalToUtc
 
 function Convert-TimeZone
 {
+    [CmdletBinding()]
     param(
+        [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [String] $Time,
         [String] $ToTimeZone,
         [String] $FromTimeZone
     )
 
-    # always start with the current utc time if $Time is not set
-    $fromTimeUtc = Get-UtcTime
+    Process {
+        # always start with the current utc time if $Time is not set
+        $fromTimeUtc = Get-UtcTime
 
-    # if from time zone is not specified, use the current system timezone
-    $fromTz = Invoke-GetTimeZone
-    if ($FromTimeZone) {
-        $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($FromTimeZone)
+        # if from time zone is not specified, use the current system timezone
+        $fromTz = Invoke-GetTimeZone
+        if ($FromTimeZone) {
+            $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($FromTimeZone)
+        }
+
+        $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone)
+
+        # convert the input time to utc using the FromTimeZone
+        if ($Time) {
+            $fromTimeKind = [System.DateTime]::SpecifyKind($Time, [System.DateTimeKind]::Unspecified)
+            $fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUTC($fromTimeKind, $fromTz)
+        }
+
+        # use the current utc time to find the time in the destination timezone
+        $toTimeKind = [System.DateTime]::SpecifyKind($fromTimeUtc, [System.DateTimeKind]::Unspecified)
+        $toTime = [TimeZoneInfo]::ConvertTimeFromUTC($toTimeKind, $toTz)
+        
+        return $toTime
     }
-
-    $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone)
-
-    # convert the input time to utc using the FromTimeZone
-    if ($Time) {
-        $fromTimeKind = [System.DateTime]::SpecifyKind($fromTime, [System.DateTimeKind]::Unspecified)
-        $fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUTC($fromTimeKind, $fromTz)
-    }
-
-    # use the current utc time to find the time in the destination timezone
-    $toTimeKind = [System.DateTime]::SpecifyKind($fromTimeUtc, [System.DateTimeKind]::Unspecified)
-    $toTime = [TimeZoneInfo]::ConvertTimeFromUTC($toTimeKind, $toTz)
-    
-    return $toTime
 }
 
 # overloaded to help with testing
