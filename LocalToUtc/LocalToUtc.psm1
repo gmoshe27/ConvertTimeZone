@@ -16,7 +16,7 @@
     
     param(
     [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [String] $UtcTime,
+    [String] $Time,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
@@ -28,7 +28,7 @@
         $local = Get-LocalTime $utc
         $tzone = Invoke-GetTimeZone
 
-        if ($UtcTime) { $utc = Get-Date $UtcTime }
+        if ($Time) { $utc = Get-Date $Time }
         if ($AddDays) { $utc = $utc.AddDays($AddDays) }
         if ($AddHours) { $utc = $utc.AddHours($AddHours) }
         if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
@@ -69,7 +69,7 @@ function Convert-LocalToUtc
 
     param(
     [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [String] $LocalTime,
+    [String] $Time,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
@@ -81,13 +81,13 @@ function Convert-LocalToUtc
         $local = Get-LocalTime $utc
         $tzone = Invoke-GetTimeZone
 
-        if ($LocalTime) { $local = Get-Date $LocalTime }
+        if ($Time) { $local = Get-Date $Time }
         if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
         if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
         if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
         if ($TimeZone) {
             $tzDst = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-            if ($LocalTime) {
+            if ($Time) {
                 # if a specific time is specified, then get the UTC time for that DateTime in
                 # the given time zone.
                 $tzTime = [System.DateTime]::SpecifyKind($local, [System.DateTimeKind]::Unspecified)

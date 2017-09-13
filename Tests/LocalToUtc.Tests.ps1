@@ -12,13 +12,13 @@ Describe 'LocalToUtc' {
 
     Context 'Time Conversion' {
         It 'Parses ISO8601 properly' {
-            $result = Convert-LocalToUTC -LocalTime $testTime -Verbose
+            $result = Convert-LocalToUTC -Time $testTime -Verbose
             $expected = Get-Date $testTime
             $result.LocalTime | Should Be $expected
         }
 
         It 'Converts local time to UTC time when the local time is defined' {
-            $result = Convert-LocalToUTC -LocalTime $testTime -TimeZone "Eastern Standard Time" -Verbose
+            $result = Convert-LocalToUTC -Time $testTime -TimeZone "Eastern Standard Time" -Verbose
             $expectedUtc = (Get-Date $testTime).AddHours(4)
             $expectedLocal = Get-Date $testTime
             $result.UtcTime | Should Be $expectedUtc
@@ -91,13 +91,13 @@ Describe 'UtcToLocal' {
 
     Context 'Time Conversion' {
         It 'Parses ISO8601 properly' {
-            $result = Convert-UtcToLocal -UtcTime $testTime -Verbose
+            $result = Convert-UtcToLocal -Time $testTime -Verbose
             $expected = Get-Date $testTime
             $result.UtcTime | Should Be $expected
         }
 
         It 'Converts UTC time to local time correctly' {
-            $result = Convert-UtcToLocal -UtcTime $testTime -TimeZone "Eastern Standard Time"
+            $result = Convert-UtcToLocal -Time $testTime -TimeZone "Eastern Standard Time"
             $expected = (Get-Date $testTime).AddHours(-4)
             $result | Should Be $expected
         }
