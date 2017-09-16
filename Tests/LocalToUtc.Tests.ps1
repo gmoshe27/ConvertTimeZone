@@ -49,12 +49,10 @@ Describe 'LocalToUtc' {
             
             $utcTime = "2017-09-04 08:25:00"
             $pstTime = "2017-09-04 01:25:00" # PDT is 7 hours behind UTC (daylight savings)
-            $expectedUtc = Get-Date $utcTime
-            $expectedLocal = Get-Date $pstTime
 
             $result = Convert-LocalToUTC -TimeZone "Pacific Standard Time" -Verbose
-            $result.UtcTime | Should Be $expectedUtc
-            $result.LocalTime | Should Be $expectedLocal
+            $result.UtcTime | Should Be (Get-Date $utcTime)
+            $result.LocalTime | Should Be (Get-Date $pstTime)
         }
 
         It 'Adds hours, minutes, seconds correctly' {
