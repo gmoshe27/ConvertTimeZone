@@ -77,9 +77,9 @@ function Convert-LocalToUtc
     )
 
     Process {
-        $utc = Get-UtcTime # 8:25 am
-        $local = Get-LocalTime $utc # 3:25 am
-        $tzone = Invoke-GetTimeZone # CST
+        $utc = Get-UtcTime
+        $local = Get-LocalTime $utc
+        $tzone = Invoke-GetTimeZone
 
         if ($Time) { $local = Get-Date $Time }
         if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
@@ -94,7 +94,7 @@ function Convert-LocalToUtc
             $local = [TimeZoneInfo]::ConvertTime($local, $FromTimeZone, $ToTimeZone)
         }
 
-        if ($TimeZone) { $tzone = $TimeZone } # PST
+        if ($TimeZone) { $tzone = $TimeZone }
         $utc = Convert-TimeZone $local -FromTimeZone $tzone -ToTimeZone "UTC"
         $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
         if ($IsVerbose -eq $true) {
