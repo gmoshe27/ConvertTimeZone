@@ -82,9 +82,9 @@ function Convert-LocalToUtc
         $tzone = Invoke-GetTimeZone
 
         if ($Time) { $local = Get-Date $Time }
-        if ($AddDays) { $local = $local.AddDays($AddDays); $utc = $utc.AddDays($AddDays) }
-        if ($AddHours) { $local = $local.AddHours($AddHours); $utc = $utc.AddHours($AddHours) }
-        if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes); $utc = $utc.AddMinutes($AddMinutes) }
+        if ($AddDays) { $local = $local.AddDays($AddDays) }
+        if ($AddHours) { $local = $local.AddHours($AddHours) }
+        if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes) }
 
         # If a time is not defined, but a timezone is, then treat the
         # current local system time as the local time of the specified timezone
