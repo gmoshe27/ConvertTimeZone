@@ -31,8 +31,7 @@ Describe 'LocalToUtc' {
             # PST is "2017-09-04 01:25:00" -7
 
             Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
-                $cst = Get-TimeZone "Central Standard Time"
-                return $cst
+                return "Central Standard Time"
             }
             Mock -ModuleName LocalToUtc Get-UtcTime {
                 $utcTime = Get-Date "2017-09-04 08:25:00"
@@ -45,6 +44,9 @@ Describe 'LocalToUtc' {
                 return $localTime
             }
 
+            # TODO - When not setting $Time, convert the current time to the timezone
+            # local time.
+            
             $utcTime = "2017-09-04 08:25:00"
             $pstTime = "2017-09-04 01:25:00" # PDT is 7 hours behind UTC (daylight savings)
             $expectedUtc = Get-Date $utcTime
@@ -55,7 +57,7 @@ Describe 'LocalToUtc' {
             $result.LocalTime | Should Be $expectedLocal
         }
 
-        It 'Adds hours, minutes, seconds correclty' {
+        It 'Adds hours, minutes, seconds correctly' {
             $result = Convert-LocalToUTC $testTime -AddDays 1 -AddHours 2 -AddMinutes 3 -Verbose
             $expected = (Get-Date $testTime).AddDays(1).AddHours(2).AddMinutes(3)
             $result.LocalTime | Should Be $expected
