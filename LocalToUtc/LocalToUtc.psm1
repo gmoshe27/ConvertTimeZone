@@ -118,28 +118,21 @@ function Convert-TimeZone
 
     Process {
         # always start with the current utc time if $Time is not set
-        $fromTimeUtc = Get-UtcTime # 8:25 am
+        $fromTimeUtc = Get-UtcTime
 
         # if from time zone is not specified, use the current system timezone
-        $fromTz = Invoke-GetTimeZone # CST
+        $fromTz = Invoke-GetTimeZone
         if ($FromTimeZone) {
-            $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($FromTimeZone) # PST
+            $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($FromTimeZone)
         }
 
-        $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone) # UTC
+        $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone)
 
         # convert the input time to utc using the FromTimeZone
         if ($Time) {
             $fromTimeKind = [System.DateTime]::SpecifyKind($Time, [System.DateTimeKind]::Unspecified)
-            $fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUTC($fromTimeKind, $fromTz) # 3:25am, #PST
+            $fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUTC($fromTimeKind, $fromTz)
             write-host $fromTimeUtc
-        } else {
-            # if we are using the system time as the local time, then convert the system time
-            # to the destination's time zone first. 
-            # Ex: if the system time is EST and the specified time is PST
-            #     $local is DateTime.Now. Convert it to PST and return the new local time and utc
-            #$fromLocalTime = [TimeZoneInfo]::ConvertTime($local, $tzone, $tzDst)
-            #$fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUtc($fromLocalTime, $tzDst)
         }
 
         # use the current utc time to find the time in the destination timezone
