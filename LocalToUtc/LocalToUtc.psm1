@@ -70,8 +70,6 @@ function Convert-LocalToUtc
     Process {
         $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
 
-        # $utc = Get-UtcTime
-        # $local = Get-LocalTime $utc
         $local = if ($Time) { $Time } else { Get-LocalTime (Get-UtcTime) }
         $local = Get-InputTime -Time:$local -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
         
@@ -84,6 +82,7 @@ function Convert-LocalToUtc
         }
 
         $result = Convert-TimeZone -Time $local -FromTimeZone $tzone -ToTimeZone "UTC" -Verbose
+        write-host $result.Time
         if (IsVerbose $Verbose) {
             $converted = New-Object psobject -Property @{
                 UtcTime=$result.ToTime;
@@ -110,7 +109,7 @@ function Convert-TimeZone
 
     Process {
         # always start with the current utc time if $Time is not set
-        $fromTimeUtc = Get-UtcTime
+        $fromTimeUtc = $inputTime = if ($Time) { $Time } else { Get-UtcTime }
 
         # if from time zone is not specified, use the current system timezone
         $fromTz = Invoke-GetTimeZone
@@ -135,7 +134,7 @@ function Convert-TimeZone
 
         if (IsVerbose $Verbose) {
             $result = New-Object psobject -Property @{
-                Time=$Time;
+                Time=$inputTime;
                 FromTimeZone=$fromTz;
                 ToTimeZone=$toTz;
                 ToTime=$toTime }
