@@ -35,8 +35,7 @@
 
         $local = Convert-TimeZone $utc -FromTimeZone "UTC" -ToTimeZone $tzone
 
-        $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
-        if ($IsVerbose -eq $true) {
+        if (IsVerbose $Verbose) {
             $tz = [TimeZoneInfo]::FindSystemTimeZoneById($tzone)
             $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tz }
             return $converted
@@ -92,8 +91,7 @@ function Convert-LocalToUtc
         if ($TimeZone) { $tzone = $TimeZone }
 
         $utc = Convert-TimeZone $local -FromTimeZone $tzone -ToTimeZone "UTC"
-        $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
-        if ($IsVerbose -eq $true) {
+        if (IsVerbose $Verbose) {
             $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
             return $converted
         }
@@ -136,8 +134,22 @@ function Convert-TimeZone
         $toTimeKind = [System.DateTime]::SpecifyKind($fromTimeUtc, [System.DateTimeKind]::Unspecified)
         $toTime = [TimeZoneInfo]::ConvertTimeFromUTC($toTimeKind, $toTz)
 
+        if (IsVerbose $Verbose) {
+            $result = New-Object psobject -Property @{
+                Time=$Time;
+                FromTimeZone=$fromTz;
+                ToTimeZone=$toTz;
+                ToTime=$toTime }
+            return $result
+        }
+
         return $toTime
     }
+}
+
+function IsVerbose ([Switch] $Verbose) {
+    $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
+    return $IsVerbose -eq $true
 }
 
 # overloaded to help with testing
