@@ -120,6 +120,8 @@ function Convert-TimeZone
         $fromTz = Invoke-GetTimeZone
         if ($FromTimeZone) {
             $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($FromTimeZone)
+        } else {
+            $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($fromTz)
         }
 
         $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone)
