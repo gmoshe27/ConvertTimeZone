@@ -18,7 +18,7 @@ There are three functions in the module,
 
 ## Usage
 ### Convert-TimeZone
-```
+```powershell
 Convert-TimeZone [[-Time] <string>] [[-ToTimeZone] <string>] [[-FromTimeZone] <string>]  [<CommonParameters>]
 ```
 
@@ -40,7 +40,7 @@ ToTimeZone | A TimeZone object describing the time zone that the `Time` was conv
 ToTime | The resulting time from the time zone conversion
 
 ### Convert-LocalToUtc and Convert-UtcToLocal
-```
+```powershell
 Convert-LocalToUtc [[-Time] <String>] [[-TimeZone] <String>] [[-AddDays] <Int32>] [[-AddHours] <Int32>] [[-AddMinutes] <Int32>] [<CommonParameters>]
 
 Convert-UtcToLocal [[-Time] <String>] [[-TimeZone] <String>] [[-AddDays] <Int32>] [[-AddHours] <Int32>] [[-AddMinutes] <Int32>] [<CommonParameters>]
@@ -67,7 +67,7 @@ TimeZone | A TimeZone object that represents the timezone used for all conversio
 ### Examples
 Call `Convert-TimeZone` to convert between any two named time zones.
 
-```
+```powershell
 Get-Date "2017-09-17 03:28:00" | Convert-TimeZone -FromTimeZone "Eastern Standard Time" -ToTimeZone "W. Europe Standard Time" -Verbose
 
 
