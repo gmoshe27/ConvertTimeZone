@@ -26,24 +26,19 @@
     Process {
         $utc = Get-UtcTime
         $local = Get-LocalTime $utc
-        $tzone = Invoke-GetTimeZone
+        $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
 
         if ($Time) { $utc = Get-Date $Time }
         if ($AddDays) { $utc = $utc.AddDays($AddDays) }
         if ($AddHours) { $utc = $utc.AddHours($AddHours) }
         if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
-        if ($TimeZone) {
-            $tz = [TimeZoneInfo]::FindSystemTimeZoneById($TimeZone)
-            $local = [TimeZoneInfo]::ConvertTimeFromUTC($utc, $tz)
-            $tzone = $tz
-        } else {
-            $local = Get-LocalTime $utc
-        }
+
+        $local = Convert-TimeZone $utc -FromTimeZone "UTC" -ToTimeZone $tzone
 
         $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
-
         if ($IsVerbose -eq $true) {
-            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+            $tz = [TimeZoneInfo]::FindSystemTimeZoneById($tzone)
+            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tz }
             return $converted
         }
 
@@ -95,6 +90,7 @@ function Convert-LocalToUtc
         }
 
         if ($TimeZone) { $tzone = $TimeZone }
+
         $utc = Convert-TimeZone $local -FromTimeZone $tzone -ToTimeZone "UTC"
         $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
         if ($IsVerbose -eq $true) {
@@ -132,7 +128,6 @@ function Convert-TimeZone
         if ($Time) {
             $fromTimeKind = [System.DateTime]::SpecifyKind($Time, [System.DateTimeKind]::Unspecified)
             $fromTimeUtc = [TimeZoneInfo]::ConvertTimeToUTC($fromTimeKind, $fromTz)
-            write-host $fromTimeUtc
         }
 
         # use the current utc time to find the time in the destination timezone

@@ -44,9 +44,6 @@ Describe 'LocalToUtc' {
                 return $localTime
             }
 
-            # TODO - When not setting $Time, convert the current time to the timezone
-            # local time.
-            
             $utcTime = "2017-09-04 08:25:00"
             $pstTime = "2017-09-04 01:25:00" # PDT is 7 hours behind UTC (daylight savings)
 
