@@ -57,6 +57,15 @@ Describe 'LocalToUtc' {
             $expected = (Get-Date $testTime).AddDays(1).AddHours(2).AddMinutes(3)
             $result.LocalTime | Should Be $expected
         }
+
+        It 'Returns the time when not verbose' {
+            Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
+                return "Central Standard Time"
+            }
+            $result = Convert-LocalToUTC $testTime
+            $expected = (Get-Date $testTime).AddHours(5)
+            $result | Should Be $expected
+        }
     }
 
     Context 'Parameters' {
