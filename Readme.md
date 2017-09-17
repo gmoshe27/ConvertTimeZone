@@ -3,24 +3,79 @@
 
 # LocalToUtc
 
-This module makes it easy to get the current local time in UTC. It was built for my specific use case where
-I work with machines that register events in UTC time stamps, but I experience their failures in my local time.
-Using this script it is possible to return the current time in UTC, and query for a time in the past or future 
-in UTC as well.
+This module makes it easy to get the current local time in UTC, as well as convert between time zones. It was 
+built for my specific use case where I work with machines that register events in UTC time stamps, but I 
+experience their failures in my local time. Using this script it is possible to return the current time in UTC, 
+and query for a time in the past or future in UTC as well.
+
+There are three functions in the module,
+- Convert-TimeZone
+- Convert-LocalTimeToUtc
+- Convert-UtcToLocalTime
+
+`Convert-TimeZone` is a generic function that can convert a time from any time zone to any other time zone.  
+`Convert-LocalToUtc` and `Convert-UtcToLocal` convert times to and from UTC.
 
 ## Usage
-There are two functions, `Convert-LocalTimeToUtc` and `Convert-UtcToLocalTime`, which will return the utc
-time or local time after the conversion, respectively. If a `-Verbose` flag is passed to either function,
-it will return an object that contains the `LocalTime`, `UtcTime`, and current `TimeZone`. 
+### Convert-TimeZone
+```
+Convert-TimeZone [[-Time] <string>] [[-ToTimeZone] <string>] [[-FromTimeZone] <string>]  [<CommonParameters>]
+```
 
-With either function, the `LocalTime` defaults to the system local time, unless it is modified by
-the `-TimeZone` parameter.
+`Covnert-TimeZone` can convert a time between two time zones. 
+
+Parameter |  Description
+----------|-------------
+Time |(optional) The time used to convert from the `FromTimeZone` to the `ToTimeZone`. If left unspecified, the time will be the current local system time.
+ToTimeZone | (required) The name of the time zone to convert to.
+FromTimeZone | (optional) The name of the time zone to convert from. If left unspecified, the time zone will be the current local system time zone.
+
+If `-Verbose` is added to the `Convert-TimeZone` function, it will return an object that contains details about the conversion.
+
+Return Parameter | Description
+---|---
+Time | The input to the time zone conversions, either the `-Time` time, or the local system time
+FromTimeZone | A TimeZone object describing the time zone that the `Time` was converted from
+ToTimeZone | A TimeZone object describing the time zone that the `Time` was converted to
+ToTime | The resulting time from the time zone conversion
+
+### Convert-LocalToUtc and Convert-UtcToLocal
+```
+Convert-LocalToUtc [[-Time] <String>] [[-TimeZone] <String>] [[-AddDays] <Int32>] [[-AddHours] <Int32>] [[-AddMinutes] <Int32>] [<CommonParameters>]
+
+Convert-UtcToLocal [[-Time] <String>] [[-TimeZone] <String>] [[-AddDays] <Int32>] [[-AddHours] <Int32>] [[-AddMinutes] <Int32>] [<CommonParameters>]
+```
+
+`Convert-LocalToUtc` and `ConvertUtcToLocal` converts the local system time to and from UTC.
+
+Parameter |  Description
+----------|-------------
+Time | (optional) The time to use for the conversion. If left unspecied, the time will be the current local system time.
+TimeZone | (optional) The name of the time zone to convert from. If left unspecified, the time zone will be the current local system time zone.
+AddDays | (optional) The number of days to add (ex: 5) or subtract (ex: -3) from the time to convert
+AddHours | (optional) The number of hours to add (ex: 5) or subtract (ex: -3) from the time to convert
+AddMinutes | (optional) The number of minutes to add (ex: 5) or subtract (ex: -3) from the time to convert
+
+If `-Verbose` is appended to either function, it will return an object that contains details about the conversion.
 
 Return Parameter | Description
 ---|---
 LocalTime | A DateTime object that respresents the local time after any modifications
 UtcTime | A DateTime object that represents the UTC time based on the local DateTime
 TimeZone | A TimeZone object that represents the timezone used for all conversions
+
+### Examples
+Call `Convert-TimeZone` to convert between any two named time zones.
+
+```
+Get-Date | Convert-TimeZone -FromTimeZone "Eastern Standard Time" -ToTimeZone "W. Europe Standard Time" -Verbose
+
+
+```
+
+
+Call `Convert-LocalToUtc` or `Convert-UtcToLocal` to convert the times using the local system time. 
+Add `-Verbose` to see the time zone that was used in the conversion.
 
 ```powershell
 Convert-LocalToUtc
@@ -39,19 +94,26 @@ either function. To see a list of valid time zones that the system is aware of, 
 - Powershell >= 5.1 - `Get-TimeZone -ListAvailable | Select Id`  
 - Powershell < 5.1 - `tzutil /l`
 
-```powershell
-Convert-UTCtoLocal -TimeZone "Israel Standard Time" -Verbose
+In the example below, the local system time (Eastern Standard Time) is used to get the time in UTC, and the
+the local time in Israel Standard Time is what is returned.
 
-LocalTime           TimeZone              UtcTime
----------           --------              -------
-9/6/2017 5:09:36 AM (UTC+02:00) Jerusalem 9/6/2017 2:09:36 AM
+```powershell
+Get-Date
+Sunday, September 17, 2017 3:12:32 PM
+
+Convert-UtctoLocal -TimeZone "Israel Standard Time" -Verbose
+
+LocalTime             TimeZone              UtcTime
+---------             --------              -------
+9/17/2017 10:12:35 PM (UTC+02:00) Jerusalem 9/17/2017 7:12:35 PM
 ```
 
 Both functions take a DateTime or DateTime string as the first unnamed parameter, which
-can also be passed in as part of a pipeline.
+can also be passed in as part of a pipeline. This allows you to override the use of the 
+local system time and use a time of your choosing.
 
 ```powershell
-Convert-LocalToUTC "2017-09-04 20:33:00" "Pacific Standard Time" -Verbose
+Convert-LocalToUtc "2017-09-04 20:33:00" "Pacific Standard Time" -Verbose
 
 LocalTime           TimeZone                               UtcTime
 ---------           --------                               -------
