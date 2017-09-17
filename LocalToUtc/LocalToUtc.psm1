@@ -28,7 +28,7 @@
 
         $t = Get-InputTime -Time:$Time -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
         $result = Convert-TimeZone -Time:$t -ToTimeZone $tzone -FromTimeZone "UTC" -Verbose
-
+        
         if (IsVerbose $Verbose) {
             $converted = New-Object psobject -Property @{
                 UtcTime=$result.Time;
@@ -68,15 +68,15 @@ function Convert-LocalToUtc
     )
 
     Process {
-        $utc = Get-UtcTime
-        $local = Get-LocalTime $utc
-        $tzone = Invoke-GetTimeZone
+        $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
+        write-host $tzone
 
-        if ($Time) { $local = Get-Date $Time }
-        if ($AddDays) { $local = $local.AddDays($AddDays) }
-        if ($AddHours) { $local = $local.AddHours($AddHours) }
-        if ($AddMinutes) { $local = $local.AddMinutes($AddMinutes) }
-
+        # $utc = Get-UtcTime
+        # $local = Get-LocalTime $utc
+        $local = if ($Time) { $Time } else { Get-LocalTime (Get-UtcTime) }
+        $local = Get-InputTime -Time:$local -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
+        write-host $local
+        
         # If a time is not defined, but a timezone is, then treat the
         # current local system time as the local time of the specified timezone
         if (! $Time -and $TimeZone) {
@@ -85,15 +85,18 @@ function Convert-LocalToUtc
             $local = [TimeZoneInfo]::ConvertTime($local, $FromTimeZone, $ToTimeZone)
         }
 
-        if ($TimeZone) { $tzone = $TimeZone }
-
-        $utc = Convert-TimeZone $local -FromTimeZone $tzone -ToTimeZone "UTC"
+        $result = Convert-TimeZone -Time $local -FromTimeZone $tzone -ToTimeZone "UTC" -Verbose
         if (IsVerbose $Verbose) {
-            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tzone }
+            $converted = New-Object psobject -Property @{
+                UtcTime=$result.ToTime;
+                LocalTime=$result.Time;
+                TimeZone=$result.FromTimeZone
+            }
+                
             return $converted
         }
 
-        return $utc
+        return $result.ToTime
     }
 }
 
