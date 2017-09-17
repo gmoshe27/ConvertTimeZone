@@ -80,8 +80,8 @@ LocalTime           TimeZone                               UtcTime
 * Added a generic Convert-TimeZone function
 * Updated Convert-LocalToUtc and Convert-UtcToLocal to use Convert-TimeZone
 * Breaking Changes
-  - Renamed the LocalTime parameter to Time for Convert-LocalToUtc
-  - Renamed the UtcTime parameter to Time for Convert-UtcToLocal
+  - Renamed the -LocalTime parameter to -Time for Convert-LocalToUtc
+  - Renamed the -UtcTime parameter to -Time for Convert-UtcToLocal
 
 ### 1.3.1
 * Lowered the required version of PS to 4.0
