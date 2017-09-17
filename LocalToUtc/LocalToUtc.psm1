@@ -69,13 +69,11 @@ function Convert-LocalToUtc
 
     Process {
         $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
-        write-host $tzone
 
         # $utc = Get-UtcTime
         # $local = Get-LocalTime $utc
         $local = if ($Time) { $Time } else { Get-LocalTime (Get-UtcTime) }
         $local = Get-InputTime -Time:$local -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
-        write-host $local
         
         # If a time is not defined, but a timezone is, then treat the
         # current local system time as the local time of the specified timezone
@@ -122,6 +120,7 @@ function Convert-TimeZone
             $fromTz = [TimeZoneInfo]::FindSystemTimeZoneById($fromTz)
         }
 
+        if (! $ToTimeZone) { return }
         $toTz = [TimeZoneInfo]::FindSystemTimeZoneById($ToTimeZone)
 
         # convert the input time to utc using the FromTimeZone
