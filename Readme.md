@@ -68,9 +68,12 @@ TimeZone | A TimeZone object that represents the timezone used for all conversio
 Call `Convert-TimeZone` to convert between any two named time zones.
 
 ```
-Get-Date | Convert-TimeZone -FromTimeZone "Eastern Standard Time" -ToTimeZone "W. Europe Standard Time" -Verbose
+Get-Date "2017-09-17 03:28:00" | Convert-TimeZone -FromTimeZone "Eastern Standard Time" -ToTimeZone "W. Europe Standard Time" -Verbose
 
 
+Time                FromTimeZone                           ToTime               ToTimeZone
+----                ------------                           ------               ----------
+09/17/2017 03:28:00 (UTC-05:00) Eastern Time (US & Canada) 9/17/2017 9:28:00 AM (UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna
 ```
 
 
