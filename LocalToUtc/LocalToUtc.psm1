@@ -24,24 +24,21 @@
     )
 
     Process {
-        $utc = Get-UtcTime
-        $local = Get-LocalTime $utc
         $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
 
-        if ($Time) { $utc = Get-Date $Time }
-        if ($AddDays) { $utc = $utc.AddDays($AddDays) }
-        if ($AddHours) { $utc = $utc.AddHours($AddHours) }
-        if ($AddMinutes) { $utc = $utc.AddMinutes($AddMinutes) }
-
-        $local = Convert-TimeZone $utc -FromTimeZone "UTC" -ToTimeZone $tzone
+        $t = Get-InputTime -Time:$Time -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
+        $result = Convert-TimeZone -Time:$t -ToTimeZone $tzone -FromTimeZone "UTC" -Verbose
 
         if (IsVerbose $Verbose) {
-            $tz = [TimeZoneInfo]::FindSystemTimeZoneById($tzone)
-            $converted = New-Object psobject -Property @{ UtcTime=$utc; LocalTime=$local; TimeZone=$tz }
+            $converted = New-Object psobject -Property @{
+                UtcTime=$result.Time;
+                LocalTime=$result.ToTime;
+                TimeZone=$result.ToTimeZone
+            }
             return $converted
         }
 
-        return $local
+        return $result.ToTime
     }
 }
 
@@ -150,6 +147,20 @@ function Convert-TimeZone
 function IsVerbose ([Switch] $Verbose) {
     $IsVerbose = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
     return $IsVerbose -eq $true
+}
+
+function Get-InputTime {
+    Param (
+        [String] $Time,
+        [Int] $AddDays,
+        [Int] $AddHours,
+        [Int] $AddMinutes
+    )
+    if ($Time) { $t = Get-Date $Time }
+    if ($AddDays) { $t = $t.AddDays($AddDays) }
+    if ($AddHours) { $t = $t.AddHours($AddHours) }
+    if ($AddMinutes) { $t = $t.AddMinutes($AddMinutes) }
+    return $t
 }
 
 # overloaded to help with testing
