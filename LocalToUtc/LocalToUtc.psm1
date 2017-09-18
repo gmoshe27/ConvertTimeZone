@@ -16,7 +16,7 @@
     
     param(
     [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [String] $Time,
+    [DateTime] $Time,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
@@ -60,7 +60,7 @@ function Convert-LocalToUtc
 
     param(
     [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-    [String] $Time,
+    [DateTime] $Time,
     [String] $TimeZone,
     [Int] $AddDays,
     [Int] $AddHours,
@@ -102,7 +102,7 @@ function Convert-TimeZone
     [CmdletBinding()]
     param(
         [parameter(ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [String] $Time,
+        [DateTime] $Time,
         [String] $ToTimeZone,
         [String] $FromTimeZone
     )
