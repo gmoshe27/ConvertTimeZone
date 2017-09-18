@@ -82,7 +82,6 @@ function Convert-LocalToUtc
         }
 
         $result = Convert-TimeZone -Time $local -FromTimeZone $tzone -ToTimeZone "UTC" -Verbose
-        write-host $result.Time
         if (IsVerbose $Verbose) {
             $converted = New-Object psobject -Property @{
                 UtcTime=$result.ToTime;

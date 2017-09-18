@@ -151,12 +151,40 @@ Describe 'UtcToLocal' {
 }
 
 Describe 'Convert-TimeZone' {
+    # Accounting for Daylight savings
+    $testTime= "2017-09-04 08:25:00"
+    
     Context 'TimeZone Conversion' {
+        It 'Converts time zones' {
+            $result = Convert-TimeZone $testTime -ToTimeZone "Alaskan Standard Time" -FromTimeZone "Hawaiian Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(2)
+        }
 
+        It 'Uses local system time when not specified' {
+            Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
+                return "Eastern Standard Time"
+            }
+            Mock -ModuleName LocalToUtc Get-UtcTime {
+                return "2017-09-04 08:25:00"
+            }
+            $result = Convert-TimeZone -ToTimeZone "Pacific Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(-7)
+        }
     }
 
     Context 'Pipeline Support' {
-        #It 'Converts pipeline time'
+        It 'Converts pipeline time' {
+            $time = Get-Date $testTime
+            $result = $time | Convert-TimeZone -ToTimeZone "Pacific Standard Time" -FromTimeZone "Central Standard Time"
+            $result | Should Be $time.AddHours(-2)
+        }
+
+        It 'Converts named Time' {
+            $time = Get-Date $testTime
+            $obj = New-Object psobject -Property @{ Name = "hello"; Time=$time; SomeField=123456 }
+            $result = $obj | Convert-TimeZone -ToTimeZone "Pacific Standard Time" -FromTimeZone "Eastern Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(-3)
+        }
     }
 
 }
