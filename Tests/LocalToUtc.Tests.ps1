@@ -12,13 +12,13 @@ Describe 'LocalToUtc' {
 
     Context 'Time Conversion' {
         It 'Parses ISO8601 properly' {
-            $result = Convert-LocalToUTC -LocalTime $testTime -Verbose
+            $result = Convert-LocalToUTC -Time $testTime -Verbose
             $expected = Get-Date $testTime
             $result.LocalTime | Should Be $expected
         }
 
         It 'Converts local time to UTC time when the local time is defined' {
-            $result = Convert-LocalToUTC -LocalTime $testTime -TimeZone "Eastern Standard Time" -Verbose
+            $result = Convert-LocalToUTC -Time $testTime -TimeZone "Eastern Standard Time" -Verbose
             $expectedUtc = (Get-Date $testTime).AddHours(4)
             $expectedLocal = Get-Date $testTime
             $result.UtcTime | Should Be $expectedUtc
@@ -26,13 +26,8 @@ Describe 'LocalToUtc' {
         }
 
         It 'Treats the current local time as the specified timezone local time' {
-            # UTC is "2017-09-04 08:25:00"
-            # CST is "2017-09-04 03:25:00" -5
-            # PST is "2017-09-04 01:25:00" -7
-
             Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
-                $cst = Get-TimeZone "Central Standard Time"
-                return $cst
+                return "Central Standard Time"
             }
             Mock -ModuleName LocalToUtc Get-UtcTime {
                 $utcTime = Get-Date "2017-09-04 08:25:00"
@@ -40,25 +35,35 @@ Describe 'LocalToUtc' {
                 return $utc
             }
             Mock -ModuleName LocalToUtc Get-LocalTime {
-                $cstTime = "2017-09-04 03:25:00"
-                $localTime = Get-Date $cstTime
-                return $localTime
+                $utcTime = Get-Date "2017-09-04 08:25:00"
+                $cstTime = $utcTime.AddHours(-5)
+                return $cstTime
             }
 
-            $utcTime = "2017-09-04 08:25:00"
-            $pstTime = "2017-09-04 01:25:00" # PDT is 7 hours behind UTC (daylight savings)
-            $expectedUtc = Get-Date $utcTime
-            $expectedLocal = Get-Date $pstTime
+            # current time in UTC - "2017-09-04 08:25:00"
+            # current time in CST - "2017-09-04 03:25:00"
+            # 3:25am PST   in UTC - "2017-09-04 10:25:00"
+            $pstTime = Get-Date "2017-09-04 03:25:00"
+            $utcTime = $pstTime.AddHours(7)
 
             $result = Convert-LocalToUTC -TimeZone "Pacific Standard Time" -Verbose
-            $result.UtcTime | Should Be $expectedUtc
-            $result.LocalTime | Should Be $expectedLocal
+            $result.UtcTime | Should Be (Get-Date $utcTime)
+            $result.LocalTime | Should Be (Get-Date $pstTime)
         }
 
-        It 'Adds hours, minutes, seconds correclty' {
+        It 'Adds hours, minutes, seconds correctly' {
             $result = Convert-LocalToUTC $testTime -AddDays 1 -AddHours 2 -AddMinutes 3 -Verbose
             $expected = (Get-Date $testTime).AddDays(1).AddHours(2).AddMinutes(3)
             $result.LocalTime | Should Be $expected
+        }
+
+        It 'Returns the time when not verbose' {
+            Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
+                return "Central Standard Time"
+            }
+            $result = Convert-LocalToUTC $testTime
+            $expected = (Get-Date $testTime).AddHours(5)
+            $result | Should Be $expected
         }
     }
 
@@ -77,10 +82,10 @@ Describe 'LocalToUtc' {
             $result | Should Be (Get-Date $testTime).AddHours(7)
         }
 
-        It 'Converts named LocalTime' {
+        It 'Converts named Time' {
             $local = Get-Date $testTime
-            New-Object psobject -Property @{ Name = "hello"; LocalTime=$local; SomeField=123456 }
-            $result = (Get-Date $testTime) | Convert-LocalToUtc -TimeZone "Pacific Standard Time"
+            $obj = New-Object psobject -Property @{ Name = "hello"; Time=$local; SomeField=123456 }
+            $result = $obj | Convert-LocalToUtc -TimeZone "Pacific Standard Time"
             $result | Should Be (Get-Date $testTime).AddHours(7)
         }
     }
@@ -91,13 +96,13 @@ Describe 'UtcToLocal' {
 
     Context 'Time Conversion' {
         It 'Parses ISO8601 properly' {
-            $result = Convert-UtcToLocal -UtcTime $testTime -Verbose
+            $result = Convert-UtcToLocal -Time $testTime -Verbose
             $expected = Get-Date $testTime
             $result.UtcTime | Should Be $expected
         }
 
         It 'Converts UTC time to local time correctly' {
-            $result = Convert-UtcToLocal -UtcTime $testTime -TimeZone "Eastern Standard Time"
+            $result = Convert-UtcToLocal -Time $testTime -TimeZone "Eastern Standard Time"
             $expected = (Get-Date $testTime).AddHours(-4)
             $result | Should Be $expected
         }
@@ -136,11 +141,64 @@ Describe 'UtcToLocal' {
             $result | Should Be (Get-Date $testTime).AddHours(-7)
         }
         
-        It 'Converts named UtcTime' {
+        It 'Converts named Time' {
             $utc = Get-Date $testTime
-            New-Object psobject -Property @{ Name = "hello"; UtcTime=$utc; SomeField=123456 }
-            $result = (Get-Date $testTime) | Convert-UtcToLocal -TimeZone "Pacific Standard Time"
+            $obj = New-Object psobject -Property @{ Name = "hello"; Time=$utc; SomeField=123456 }
+            $result = $obj | Convert-UtcToLocal -TimeZone "Pacific Standard Time"
             $result | Should Be (Get-Date $testTime).AddHours(-7)
         }
     }
+}
+
+Describe 'Convert-TimeZone' {
+    # Accounting for Daylight savings
+    $testTime= "2017-09-04 08:25:00"
+    
+    Context 'TimeZone Conversion' {
+        It 'Converts time zones' {
+            $result = Convert-TimeZone $testTime -ToTimeZone "Alaskan Standard Time" -FromTimeZone "Hawaiian Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(2)
+        }
+
+        It 'Uses local system time when not specified' {
+            Mock -ModuleName LocalToUtc Invoke-GetTimeZone {
+                return "Eastern Standard Time"
+            }
+            Mock -ModuleName LocalToUtc Get-UtcTime {
+                return "2017-09-04 08:25:00"
+            }
+            $result = Convert-TimeZone -ToTimeZone "Pacific Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(-7)
+        }
+    }
+
+    Context 'Verbose' {
+        $cst = Get-Date $testTime
+        $utc = $cst.AddHours(5)
+        $japanTime = $utc.AddHours(9)
+
+        # convert $testTime in Central Standard Time to Japan Standard Time
+        $result = Convert-TimeZone $cst "Tokyo Standard Time" "Central Standard Time" -Verbose
+
+        $result.Time | Should Be $cst
+        $result.ToTime | Should Be $japanTime
+        $result.FromTimeZone | Should Be (Get-TimeZone "Central Standard Time")
+        $result.ToTimeZone | Should Be (Get-TimeZone "Tokyo Standard Time")
+    }
+
+    Context 'Pipeline Support' {
+        It 'Converts pipeline time' {
+            $time = Get-Date $testTime
+            $result = $time | Convert-TimeZone -ToTimeZone "Pacific Standard Time" -FromTimeZone "Central Standard Time"
+            $result | Should Be $time.AddHours(-2)
+        }
+
+        It 'Converts named Time' {
+            $time = Get-Date $testTime
+            $obj = New-Object psobject -Property @{ Name = "hello"; Time=$time; SomeField=123456 }
+            $result = $obj | Convert-TimeZone -ToTimeZone "Pacific Standard Time" -FromTimeZone "Eastern Standard Time"
+            $result | Should Be (Get-Date $testTime).AddHours(-3)
+        }
+    }
+
 }
