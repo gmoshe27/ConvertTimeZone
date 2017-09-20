@@ -172,6 +172,20 @@ Describe 'Convert-TimeZone' {
         }
     }
 
+    Context 'Verbose' {
+        $cst = Get-Date $testTime
+        $utc = $cst.AddHours(5)
+        $japanTime = $utc.AddHours(9)
+
+        # convert $testTime in Central Standard Time to Japan Standard Time
+        $result = Convert-TimeZone $cst "Tokyo Standard Time" "Central Standard Time" -Verbose
+
+        $result.Time | Should Be $cst
+        $result.ToTime | Should Be $japanTime
+        $result.FromTimeZone | Should Be (Get-TimeZone "Central Standard Time")
+        $result.ToTimeZone | Should Be (Get-TimeZone "Tokyo Standard Time")
+    }
+
     Context 'Pipeline Support' {
         It 'Converts pipeline time' {
             $time = Get-Date $testTime
