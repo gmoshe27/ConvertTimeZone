@@ -173,3 +173,7 @@ function Invoke-GetTimeZone {
     
     return tzutil /g
 }
+
+Export-ModuleMember -function Convert-LocalToUtc
+Export-ModuleMember -function Convert-UtcToLocal
+Export-ModuleMember -function Convert-TimeZone
