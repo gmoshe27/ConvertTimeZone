@@ -141,6 +141,11 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.5.0
+* Added argument completers for -TimeZone, -FromTimeZone and -ToTimeZone parameters
+* Argument completers are only available on powershell >= 5.0
+* Fixed a bug when not sending a time parameter to Convert-UtcToLocal
+
 ### 1.4.0
 * Added a generic Convert-TimeZone function
 * Updated Convert-LocalToUtc and Convert-UtcToLocal to use Convert-TimeZone
