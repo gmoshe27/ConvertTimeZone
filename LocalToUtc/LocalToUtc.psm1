@@ -25,8 +25,9 @@
 
     Process {
         $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
+        $utc = if ($Time) { $Time } else { Get-UtcTime }
 
-        $t = Get-InputTime -Time:$Time -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
+        $t = Get-InputTime -Time:$utc -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
         $result = Convert-TimeZone -Time:$t -ToTimeZone $tzone -FromTimeZone "UTC" -Verbose
         
         if (IsVerbose $Verbose) {
@@ -175,7 +176,7 @@ function Invoke-GetTimeZone {
 }
 
 # import the auto completer
-. $PSScriptRoot\ArgumentCompleter.ps1
+. $PSScriptRoot\Argument-Completer.ps1
 
 Export-ModuleMember -function Convert-LocalToUtc
 Export-ModuleMember -function Convert-UtcToLocal
