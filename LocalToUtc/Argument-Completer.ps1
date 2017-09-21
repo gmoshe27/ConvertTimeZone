@@ -3,7 +3,7 @@ function Register-TimeZoneCompleters {
         [System.Tuple]::Create("Convert-LocalToUtc","TimeZone"),
         [System.Tuple]::Create("Convert-UtcToLocal", "TimeZone"),
         [System.Tuple]::Create("Convert-TimeZone", "ToTimeZone"),
-        [System.Tupel]::Create("Convert-TimeZone", "FromTimeZone")
+        [System.Tuple]::Create("Convert-TimeZone", "FromTimeZone")
     )
 
     foreach ($tpl in $commands) {

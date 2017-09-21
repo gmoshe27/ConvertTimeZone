@@ -176,8 +176,10 @@ function Invoke-GetTimeZone {
 }
 
 # Register the TimeZone parameter completers
-. $PSScriptRoot\Argument-Completer.ps1
-Register-TimeZoneCompleters
+if ($PSVersionTable.PSVersion.Major -ge 5) {
+    . $PSScriptRoot\Argument-Completer.ps1
+    Register-TimeZoneCompleters
+}
 
 Export-ModuleMember -function Convert-LocalToUtc
 Export-ModuleMember -function Convert-UtcToLocal
