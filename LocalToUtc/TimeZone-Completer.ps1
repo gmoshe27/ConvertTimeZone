@@ -7,14 +7,14 @@ function Register-TimeZoneCompleters {
     )
 
     foreach ($tpl in $commands) {
-        Register-ArgumentCompleter \
-            -CommandName $tpl.Item1 \
-            -ParameterName $tpl.Item2 \
-            -ScriptBlock TimeZone-Completer
+        Register-ArgumentCompleter `
+            -CommandName $tpl.Item1 `
+            -ParameterName $tpl.Item2 `
+            -ScriptBlock $TimeZoneCompleter
     }
 }
 
-function TimeZone-Completer {
+$TimeZoneCompleter = {
     Param(
         $commandName,        #The command calling this argument completer.
         $parameterName,      #The parameter currently active for the argument completer.
@@ -36,9 +36,11 @@ function TimeZone-Completer {
 
         New-Object System.Management.Automation.CompletionResult (
             $CompletionText,  #Completion text that will show up on the command line.
-            "$($_) ($Item)",  #List item text that will show up in intellisense.
+            #"$($_) ($Item)",  #List item text that will show up in intellisense.
+            "$_",
             'ParameterValue', #The type of the completion result.
-            "$($_) ($Item)"   #The tooltip info that will show up additionally in intellisense.
+            #"$($_) ($Item)"   #The tooltip info that will show up additionally in intellisense.
+            "$_"
         )
     }
 }
