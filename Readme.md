@@ -16,6 +16,12 @@ There are three functions in the module,
 `Convert-TimeZone` is a generic function that can convert a time from any time zone to any other time zone.  
 `Convert-LocalToUtc` and `Convert-UtcToLocal` convert times to and from UTC.
 
+## Install It
+Install it from the [Powershell Gallery](https://www.powershellgallery.com/packages/LocalToUtc)
+```powershell
+PS> Install-Module -Name LocalToUtc
+```
+
 ## Usage
 ### Convert-TimeZone
 ```powershell
