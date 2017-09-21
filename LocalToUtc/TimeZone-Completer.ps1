@@ -28,19 +28,15 @@ $TimeZoneCompleter = {
     $PartialMatches | ForEach-Object {
         $CompletionText = $_
 
-        #$Item = $TimeZones.Keys | Where-Object { $UsageLocations[$_] -eq $CompletionText }
-
         if ($_ -match '\s') {
             $CompletionText = "'$_'"
         }
 
         New-Object System.Management.Automation.CompletionResult (
             $CompletionText,  #Completion text that will show up on the command line.
-            #"$($_) ($Item)",  #List item text that will show up in intellisense.
-            "$_",
+            "$_",             #List item text that will show up in intellisense.
             'ParameterValue', #The type of the completion result.
-            #"$($_) ($Item)"   #The tooltip info that will show up additionally in intellisense.
-            "$_"
+            "$_"              #The tooltip info that will show up additionally in intellisense.
         )
     }
 }
