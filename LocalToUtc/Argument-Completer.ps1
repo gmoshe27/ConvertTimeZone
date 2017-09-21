@@ -1,4 +1,20 @@
-Register-ArgumentCompleter -CommandName Convert-LocalToUtc -ParameterName TimeZone -ScriptBlock {
+function Register-TimeZoneCompleters {
+    $commands = @(
+        [System.Tuple]::Create("Convert-LocalToUtc","TimeZone"),
+        [System.Tuple]::Create("Convert-UtcToLocal", "TimeZone"),
+        [System.Tuple]::Create("Convert-TimeZone", "ToTimeZone"),
+        [System.Tupel]::Create("Convert-TimeZone", "FromTimeZone")
+    )
+
+    foreach ($tpl in $commands) {
+        Register-ArgumentCompleter \
+            -CommandName $tpl.Item1 \
+            -ParameterName $tpl.Item2 \
+            -ScriptBlock TimeZone-Completer
+    }
+}
+
+function TimeZone-Completer {
     Param(
         $commandName,        #The command calling this argument completer.
         $parameterName,      #The parameter currently active for the argument completer.
@@ -12,7 +28,6 @@ Register-ArgumentCompleter -CommandName Convert-LocalToUtc -ParameterName TimeZo
     $PartialMatches | ForEach-Object {
         $CompletionText = $_
 
-        #Expensive... Causes intellisense to time out sometimes on first use for a full search. I will make this completer more efficient at some point.
         #$Item = $TimeZones.Keys | Where-Object { $UsageLocations[$_] -eq $CompletionText }
 
         if ($_ -match '\s') {

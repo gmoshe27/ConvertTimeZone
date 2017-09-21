@@ -175,8 +175,9 @@ function Invoke-GetTimeZone {
     return tzutil /g
 }
 
-# import the auto completer
+# Register the TimeZone parameter completers
 . $PSScriptRoot\Argument-Completer.ps1
+Register-TimeZoneCompleters
 
 Export-ModuleMember -function Convert-LocalToUtc
 Export-ModuleMember -function Convert-UtcToLocal
