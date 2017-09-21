@@ -39,6 +39,8 @@ FromTimeZone | A TimeZone object describing the time zone that the `Time` was co
 ToTimeZone | A TimeZone object describing the time zone that the `Time` was converted to
 ToTime | The resulting time from the time zone conversion
 
+Tab completion is supported for the `-ToTimeZone` and `-FromTimeZone` parameters
+
 ### Convert-LocalToUtc and Convert-UtcToLocal
 ```powershell
 Convert-LocalToUtc [[-Time] <String>] [[-TimeZone] <String>] [[-AddDays] <Int32>] [[-AddHours] <Int32>] [[-AddMinutes] <Int32>] [<CommonParameters>]
@@ -63,6 +65,8 @@ Return Parameter | Description
 LocalTime | A DateTime object that respresents the local time after any modifications
 UtcTime | A DateTime object that represents the UTC time based on the local DateTime
 TimeZone | A TimeZone object that represents the timezone used for all conversions
+
+Tab completion is supported for the `-TimeZone` parameter
 
 ### Examples
 Call `Convert-TimeZone` to convert between any two named time zones.
@@ -140,6 +144,11 @@ LocalTime           TimeZone                               UtcTime
 ```
 
 ## Versions
+
+### 1.5.0
+* Added argument completers for -TimeZone, -FromTimeZone and -ToTimeZone parameters
+* Argument completers are only available on powershell >= 5.0
+* Fixed a bug when not sending a time parameter to Convert-UtcToLocal
 
 ### 1.4.0
 * Added a generic Convert-TimeZone function

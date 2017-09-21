@@ -11,6 +11,11 @@ Describe 'LocalToUtc' {
     $testTime = "2017-09-04 08:25:00"
 
     Context 'Time Conversion' {
+        It 'Returns a time if no parameters are set' {
+            $result = Convert-LocalToUtc
+            $result | Should BeOfType [System.DateTime]
+        }
+
         It 'Parses ISO8601 properly' {
             $result = Convert-LocalToUTC -Time $testTime -Verbose
             $expected = Get-Date $testTime
@@ -95,6 +100,11 @@ Describe 'UtcToLocal' {
     $testTime= "2017-09-04 08:25:00"
 
     Context 'Time Conversion' {
+        It 'Returns a time if no parameters are set' {
+            $result = Convert-UtcToLocal
+            $result | Should BeOfType [System.DateTime]
+        }
+
         It 'Parses ISO8601 properly' {
             $result = Convert-UtcToLocal -Time $testTime -Verbose
             $expected = Get-Date $testTime

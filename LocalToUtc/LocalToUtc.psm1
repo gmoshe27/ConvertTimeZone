@@ -25,8 +25,9 @@
 
     Process {
         $tzone = if ($TimeZone) { $TimeZone } else { Invoke-GetTimeZone }
+        $utc = if ($Time) { $Time } else { Get-UtcTime }
 
-        $t = Get-InputTime -Time:$Time -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
+        $t = Get-InputTime -Time:$utc -AddDays:$AddDays -AddHours:$AddHours -AddMinutes:$AddMinutes
         $result = Convert-TimeZone -Time:$t -ToTimeZone $tzone -FromTimeZone "UTC" -Verbose
         
         if (IsVerbose $Verbose) {
@@ -172,6 +173,13 @@ function Invoke-GetTimeZone {
     }
     
     return tzutil /g
+}
+
+# Register the TimeZone parameter completers
+if ($PSVersionTable.PSVersion.Major -ge 5) {
+    write-host $PSScriptRoot
+    . $PSScriptRoot\TimeZone-Completer.ps1
+    Register-TimeZoneCompleters
 }
 
 Export-ModuleMember -function Convert-LocalToUtc
