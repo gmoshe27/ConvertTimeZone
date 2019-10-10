@@ -152,7 +152,7 @@ function IsVerbose ([Switch] $Verbose) {
 
 function Get-InputTime {
     Param (
-        [datetime] $Time,
+        [DateTime] $Time,
         [Int] $AddDays,
         [Int] $AddHours,
         [Int] $AddMinutes
