@@ -151,6 +151,9 @@ LocalTime           TimeZone                               UtcTime
 
 ## Versions
 
+### 1.5.1
+* Fixed a type issue found when running with Powershell Core 6
+
 ### 1.5.0
 * Added argument completers for -TimeZone, -FromTimeZone and -ToTimeZone parameters
 * Argument completers are only available on powershell >= 5.0
